@@ -6,7 +6,7 @@
 class PacketProcessorHTTPReq: public PacketProcessor
 {
 private:
-    pair<string, string> GetHost(string& payload)
+    pair<string, string> GetHost(string& payload);
 public:
     PacketProcessorHTTPReq(Data &data);
 

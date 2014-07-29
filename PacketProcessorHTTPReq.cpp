@@ -1,4 +1,7 @@
-#include<PacketProcessorHTTPReq.h>
+#include <PacketProcessorHTTPReq.h>
+#include <ClientInfo.h>
+#include <Data.h>
+#include <Utils.h>
 
 PacketProcessorHTTPReq::PacketProcessorHTTPReq(Data& data)
     : PacketProcessor(FILTER_HTTP_REQUEST, data)
@@ -21,13 +24,13 @@ bool PacketProcessorHTTPReq::ProcessPacket(Packet *pkt)
     ClientInfo client(eth->GetSourceMAC());
 
     //host info
-    RawLayer* raw_payload = sniff_packet->GetLayer<RawLayer>();
-    pair<string, string> host = GetHost()
+    string payload = pkt->GetLayer<RawLayer>()->GetStringPayload();
+    pair<string, string> host = GetHost(payload);
 
-    Data::iteratorClientHTTPReq itc = Data->activeProcessedInfo_HTTPReq.find(client);
-    if (itc == Data->activeProcessedInfo_HTTPReq.end())
+    Data::iteratorClientHTTPReq itc = data->processedInfo_HTTPReq.find(client);
+    if (itc == data->processedInfo_HTTPReq.end())
     {
-        itc = Data->activeProcessedInfo_HTTPReq.insert(pair<ClientInfo, map<string, ProcessedHTTPReq*> >(client, map<string, ProcessedHTTPReq*>(host.first, 0)));
+        itc = data->processedInfo_HTTPReq.insert(pair<ClientInfo, map<string, ProcessedHTTPReq*> >(client, map<string, ProcessedHTTPReq*>(host.first, 0)));
     }
 
     Data::iteratorProcessedHTTPReq itp itc->second.find(host.first);
@@ -38,10 +41,15 @@ bool PacketProcessorHTTPReq::ProcessPacket(Packet *pkt)
 
     if (itp->second == 0)
     {
-        itp->second = new ProcessedHTTPReq
+        timer_t time;
+        itp->second = new ProcessedHTTPReq(client, host, time);
+        Data->activeProcessedInfo_HTTPReq.push(itp->second);
     }
 
-    return false;
+    itp->second->no_pkt++;
+    itp->second->requested.psuh_back(host.second);
+
+    return true;
 }
 
 pair<string, string> PacketProcessorHTTPReq::GetHost(string& payload)
@@ -50,7 +58,7 @@ pair<string, string> PacketProcessorHTTPReq::GetHost(string& payload)
         stringstream payload_stream(payload);
         int found = 0; //1 - host, 2 - get
 
-        while(safeGetLine(payload_stream, aux, ' '))
+        while(Utils.SafeGetLine(payload_stream, aux, ' '))
         {
                 if (found)
                 {

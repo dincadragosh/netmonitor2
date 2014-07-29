@@ -1,7 +1,7 @@
 #include <PacketProcessor.h>
 
 PacketProcessor::PacketProcessor(FilterType filterType, Data& data)
-    : filterType(filterType), data(data)
+    : filterType(filterType), data(&data)
 {
 }
 

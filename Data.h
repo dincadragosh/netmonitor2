@@ -15,7 +15,7 @@ public:
     //HTTP Requests
     typedef map<ClientInfo, map<string, ProcessedHTTPReq*> >::iterator iteratorClientHTTPReq;
     typedef map<string, ProcessedHTTPReq*>::iterator iteratorProcessedHTTPReq;
-    map<ClientInfo, map<string, ProcessedHTTPReq*> > activeProcessedInfo_HTTPReq;
+    map<ClientInfo, map<string, ProcessedHTTPReq*> > processedInfo_HTTPReq;
     queue<ProcessedHTTPReq* > activeProcessedInfo_HTTPReq;
     queue<ProcessedHTTPReq* > saveProcessedInfo_HTTPReq;
 };

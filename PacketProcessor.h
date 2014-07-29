@@ -4,6 +4,7 @@
 #include <Globals.h>
 #include <crafter.h>
 
+using namespace std;
 using namespace Crafter;
 
 class Data;
@@ -15,7 +16,7 @@ private:
 protected:
     FilterType filterType;
 
-    Data& data;
+    Data *data;
 
     PacketProcessor(FilterType filterType, Data& data);
     FilterType GetFilterType();

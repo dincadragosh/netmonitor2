@@ -2,9 +2,9 @@
 #include <ClientInfo.h>
 
 
-ClientInfo::ClientInfo(string& mac)
+ClientInfo::ClientInfo(string mac)
+    : mac_name(mac)
 {
-    this->mac_name = mac;
 }
 
 bool ClientInfo::operator == (string& mac)

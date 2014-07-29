@@ -11,7 +11,7 @@ private:
 public:
     string mac_name;
 
-    ClientInfo(string& mac_name);
+    ClientInfo(string mac_name);
 
     bool operator == (string& mac);
     bool operator != (string& mac);
