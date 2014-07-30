@@ -13,8 +13,10 @@ public:
 
     ClientInfo(string mac_name);
 
-    bool operator == (string& mac);
-    bool operator != (string& mac);
+    bool operator== (string& mac);
+    bool operator!= (string& mac);
+    bool operator< (const ClientInfo& mac);
+    bool operator> (const ClientInfo& mac);
 };
 
 #endif

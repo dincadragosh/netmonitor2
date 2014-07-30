@@ -1,6 +1,6 @@
 #include <Utils.h>
 
-std::istream& Utils::SafeGetline(std::istream& is, std::string& t, char ch)
+std::istream& Utils::SafeGetLine(std::istream& is, std::string& t, char ch)
 {
     t.clear();
 

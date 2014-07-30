@@ -2,6 +2,7 @@
 #include <ClientInfo.h>
 #include <Data.h>
 #include <Utils.h>
+#include <ProcessedHTTPReq.h>
 
 PacketProcessorHTTPReq::PacketProcessorHTTPReq(Data& data)
     : PacketProcessor(FILTER_HTTP_REQUEST, data)
@@ -22,6 +23,7 @@ bool PacketProcessorHTTPReq::ProcessPacket(Packet *pkt)
     //client info
     Ethernet *eth = pkt->GetLayer<Ethernet>(1);
     ClientInfo client(eth->GetSourceMAC());
+    time_t time;
 
     //host info
     string payload = pkt->GetLayer<RawLayer>()->GetStringPayload();
@@ -30,24 +32,22 @@ bool PacketProcessorHTTPReq::ProcessPacket(Packet *pkt)
     Data::iteratorClientHTTPReq itc = data->processedInfo_HTTPReq.find(client);
     if (itc == data->processedInfo_HTTPReq.end())
     {
-        itc = data->processedInfo_HTTPReq.insert(pair<ClientInfo, map<string, ProcessedHTTPReq*> >(client, map<string, ProcessedHTTPReq*>(host.first, 0)));
+
+        pair<Data::iteratorClientHTTPReq, bool> p = data->processedInfo_HTTPReq.insert(pair<ClientInfo, map<string, ProcessedHTTPReq*> >(client, map<string, ProcessedHTTPReq*>()));
+        itc = p.first;
     }
 
-    Data::iteratorProcessedHTTPReq itp itc->second.find(host.first);
+    Data::iteratorProcessedHTTPReq itp = itc->second.find(host.first);
     if (itp == itc->second.end())
     {
-        itp = itc->second.insert(map<string, ProcessedHTTPReq*>(host.first, 0)));
-    }
+        pair<Data::iteratorProcessedHTTPReq, bool> p = itc->second.insert(pair<string, ProcessedHTTPReq*>(host.first, new ProcessedHTTPReq(client, host.first, time)));
+        itp = p.first;
+        data->activeProcessedInfo_HTTPReq.push(itp->second);
 
-    if (itp->second == 0)
-    {
-        timer_t time;
-        itp->second = new ProcessedHTTPReq(client, host, time);
-        Data->activeProcessedInfo_HTTPReq.push(itp->second);
     }
 
     itp->second->no_pkt++;
-    itp->second->requested.psuh_back(host.second);
+    itp->second->requested.push_back(host.second);
 
     return true;
 }
@@ -58,21 +58,21 @@ pair<string, string> PacketProcessorHTTPReq::GetHost(string& payload)
         stringstream payload_stream(payload);
         int found = 0; //1 - host, 2 - get
 
-        while(Utils.SafeGetLine(payload_stream, aux, ' '))
+        while(Utils::SafeGetLine(payload_stream, aux, ' '))
         {
                 if (found)
                 {
                         if (found == 1)
                         {
                                 host = aux;
-                                file << "host: " << host << endl;
+                                //cout << "host: " << host << endl;
                                 found = 0;
                                 continue;
                         }
                         else
                         {
                                 get = aux;
-                                file << "GET: " << get <<endl;
+                                //cout << "GET: " << get <<endl;
                                 found = 0;
                                 continue;
                         }

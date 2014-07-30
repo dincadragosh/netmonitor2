@@ -7,16 +7,25 @@ ClientInfo::ClientInfo(string mac)
 {
 }
 
-bool ClientInfo::operator == (string& mac)
+bool ClientInfo::operator== (string& mac)
 {
     return this->mac_name == mac;
 }
 
-bool ClientInfo::operator != (string& mac)
+bool ClientInfo::operator!= (string& mac)
 {
     return this->mac_name != mac;
 }
 
+bool ClientInfo::operator< (const ClientInfo& mac)
+{
+    return this->mac_name < mac.mac_name;
+}
+
+bool ClientInfo::operator> (const ClientInfo& mac)
+{
+    return this->mac_name > mac.mac_name;
+}
 /*bool ClientInfo::operator == (byte *mac)
 {
     return !(memcmp(&this->mac, mac, sizeof(this->mac)));

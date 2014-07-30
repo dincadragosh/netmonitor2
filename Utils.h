@@ -11,6 +11,6 @@ class Utils
 private:
     Utils();
 public:
-    static std::istream& SafeGetline(std::istream& is, std::string& t, char ch);
+    static std::istream& SafeGetLine(std::istream& is, std::string& t, char ch);
 };
 #endif

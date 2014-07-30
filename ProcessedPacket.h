@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <time.h>
 
 using namespace std;
 
@@ -13,7 +14,7 @@ private:
 public:
     ClientInfo client;
     string host;
-    long int no_pkt = 0;
+    long int no_pkt;
     time_t time;
 
     ProcessedPacket(ClientInfo& client,string host, time_t time, long int no_pkt=0);
