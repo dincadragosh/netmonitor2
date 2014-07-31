@@ -15,8 +15,8 @@ public:
 
     bool operator== (string& mac);
     bool operator!= (string& mac);
-    bool operator< (const ClientInfo& mac);
-    bool operator> (const ClientInfo& mac);
+    bool operator< (const ClientInfo& mac) const;
+    bool operator> (const ClientInfo& mac) const;
 };
 
 #endif

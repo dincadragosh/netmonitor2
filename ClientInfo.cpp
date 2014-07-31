@@ -17,12 +17,12 @@ bool ClientInfo::operator!= (string& mac)
     return this->mac_name != mac;
 }
 
-bool ClientInfo::operator< (const ClientInfo& mac)
+bool ClientInfo::operator< (const ClientInfo& mac) const
 {
     return this->mac_name < mac.mac_name;
 }
 
-bool ClientInfo::operator> (const ClientInfo& mac)
+bool ClientInfo::operator> (const ClientInfo& mac) const
 {
     return this->mac_name > mac.mac_name;
 }
