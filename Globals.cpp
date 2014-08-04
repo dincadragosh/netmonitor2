@@ -22,4 +22,3 @@ string pcap_filter[] =
     /* FILTER_ALL */  "tcp and dst port 80"
 };
 
-

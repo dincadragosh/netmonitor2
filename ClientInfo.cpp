@@ -36,3 +36,8 @@ bool ClientInfo::operator != (byte *mac)
     return !(*this == mac);
 }
 */
+
+ClientInfo::operator std::string () const
+{
+    return this->mac_name;
+}

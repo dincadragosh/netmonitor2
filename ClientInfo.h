@@ -17,6 +17,7 @@ public:
     bool operator!= (string& mac);
     bool operator< (const ClientInfo& mac) const;
     bool operator> (const ClientInfo& mac) const;
+    operator std::string () const;
 };
 
 #endif

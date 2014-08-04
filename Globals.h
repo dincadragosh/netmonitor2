@@ -30,4 +30,12 @@ enum FilterType
 
 extern string pcap_filter[];
 
+/* Debug */
+#define DEBUG 1
+#define debug_print(_info)    \
+            if (DEBUG)  \
+                cout << __func__ << "(" << __LINE__ << "):" << _info << endl
+
+
+
 #endif

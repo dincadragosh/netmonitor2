@@ -33,12 +33,12 @@ void Detector::StartCapture()
 /* static functions */
 void Detector::EthPacketHandler(Packet* packet, void* user)
 {
-    cout << "got packet on eth!" << endl;
-//    if(ethMonitor->detector.processorHTTPreq.CanBeProcessed(packet))
-//        ethMonitor->detector.processorHTTPreq.ProcessPacket(packet);
+    //debug_print("got packet on eth!");
+    if(ethMonitor->detector.processorHTTPreq.CanBeProcessed(packet))
+        ethMonitor->detector.processorHTTPreq.ProcessPacket(packet);
 }
 
 void Detector::WlanPacketHandler(Packet* packet, void* user)
 {
-    cout << "got packet on wi-fi!" << endl;
+    debug_print("got packet on wi-fi!");
 }
