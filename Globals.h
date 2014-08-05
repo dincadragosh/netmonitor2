@@ -18,7 +18,7 @@ class Configuration;
 extern Configuration ethFactoryConfig;
 
 //Time:
-#define UNIT_TIME 60 //sec
+#define UNIT_TIME 10 //sec
 extern time_t time_current;
 
 /* Filter */

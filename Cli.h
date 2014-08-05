@@ -9,6 +9,7 @@ private:
     static void ShowMenu(int opt = 0);
     static void ShowMainMenu();
     static void ShowHTTPReq();
+    static void ShowStoreHTTPReq();
 
 public:
     static void UseCli();

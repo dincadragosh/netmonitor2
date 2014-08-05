@@ -20,7 +20,8 @@ bool PacketProcessorHTTPReq::CanBeProcessed(Packet *pkt)
 
 bool PacketProcessorHTTPReq::ProcessPacket(Packet *pkt)
 {
-    time_t time;
+    time_t cur_time;
+    bool host_just_added = false;
 
     //client info
     Ethernet *eth = pkt->GetLayer<Ethernet>();
@@ -39,6 +40,8 @@ bool PacketProcessorHTTPReq::ProcessPacket(Packet *pkt)
     debug_print("client MAC: " + client.mac_name);
     debug_print("host: " + host.first);
 
+    pthread_mutex_lock(&data->mutex_activeHTTPReq);
+
     Data::iteratorClientHTTPReq itc = data->processedInfo_HTTPReq.find(client);
     if (itc == data->processedInfo_HTTPReq.end())
     {
@@ -48,10 +51,12 @@ bool PacketProcessorHTTPReq::ProcessPacket(Packet *pkt)
     }
 
     Data::iteratorProcessedHTTPReq itp = itc->second.find(host.first);
+    time(&cur_time);
     if (itp == itc->second.end())
     {
         debug_print("add new host(" + host.first + ") to mac " + client.mac_name);
-        pair<Data::iteratorProcessedHTTPReq, bool> p = itc->second.insert(pair<string, ProcessedHTTPReq*>(host.first, new ProcessedHTTPReq(client, host.first, time)));
+        host_just_added = true;
+        pair<Data::iteratorProcessedHTTPReq, bool> p = itc->second.insert(pair<string, ProcessedHTTPReq*>(host.first, new ProcessedHTTPReq(client, host.first, cur_time)));
         itp = p.first;
         data->activeProcessedInfo_HTTPReq.push(itp->second);
 
@@ -59,7 +64,18 @@ bool PacketProcessorHTTPReq::ProcessPacket(Packet *pkt)
 
     debug_print("number of pkt: " << (itp->second->no_pkt+1));
     itp->second->no_pkt++;
-    itp->second->requested.push_back(host.second);
+
+
+    if (host_just_added || difftime(cur_time, itp->second->time) < UNIT_TIME)
+    {
+        itp->second->requested.push_back(host.second);
+    }
+    else
+    {
+        Store(itp->second);
+    }
+
+    pthread_mutex_unlock(&data->mutex_activeHTTPReq);
 
     return true;
 }
@@ -101,4 +117,25 @@ pair<string, string> PacketProcessorHTTPReq::GetHost(string& payload)
         }
 
         return pair<string, string>(host, get);
+}
+
+bool PacketProcessorHTTPReq::Store(ProcessedHTTPReq *p)
+{
+    pthread_mutex_lock(&data->mutex_storeHTTPReq);
+
+    debug_print("Started storing");
+
+    for(ProcessedHTTPReq *front; ; data->activeProcessedInfo_HTTPReq.pop())
+    {
+        front = data->activeProcessedInfo_HTTPReq.front();
+        debug_print("Storing mac:" << front->client.mac_name << " host: " << front->host);
+
+        data->storeProcessedInfo_HTTPReq.push(front);
+        if (front == p)
+            break;
+    }
+
+    pthread_mutex_unlock(&data->mutex_storeHTTPReq);
+
+    return true;
 }
