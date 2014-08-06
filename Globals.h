@@ -19,6 +19,7 @@ extern Configuration ethFactoryConfig;
 
 //Time:
 #define UNIT_TIME 10 //sec
+typedef time_t monitor_time;
 extern time_t time_current;
 
 /* Filter */

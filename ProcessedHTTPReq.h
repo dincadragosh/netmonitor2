@@ -9,7 +9,7 @@ private:
 
 public:
     vector<string> requested;
-    ProcessedHTTPReq(ClientInfo& client,string& host, time_t& time, long int no_pkt = 0);
+    ProcessedHTTPReq(ClientInfo& client,string& host, monitor_time& time, long int no_pkt = 1);
 };
 
 

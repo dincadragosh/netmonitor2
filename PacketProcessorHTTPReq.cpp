@@ -3,6 +3,7 @@
 #include <Data.h>
 #include <Utils.h>
 #include <ProcessedHTTPReq.h>
+#include <Timer.h>
 
 PacketProcessorHTTPReq::PacketProcessorHTTPReq(Data& data)
     : PacketProcessor(FILTER_HTTP_REQUEST, data)
@@ -20,7 +21,6 @@ bool PacketProcessorHTTPReq::CanBeProcessed(Packet *pkt)
 
 bool PacketProcessorHTTPReq::ProcessPacket(Packet *pkt)
 {
-    time_t cur_time;
     bool host_just_added = false;
 
     //client info
@@ -51,28 +51,38 @@ bool PacketProcessorHTTPReq::ProcessPacket(Packet *pkt)
     }
 
     Data::iteratorProcessedHTTPReq itp = itc->second.find(host.first);
-    time(&cur_time);
+
     if (itp == itc->second.end())
     {
         debug_print("add new host(" + host.first + ") to mac " + client.mac_name);
         host_just_added = true;
+        monitor_time cur_time; Timer::GetTime(&cur_time);
         pair<Data::iteratorProcessedHTTPReq, bool> p = itc->second.insert(pair<string, ProcessedHTTPReq*>(host.first, new ProcessedHTTPReq(client, host.first, cur_time)));
         itp = p.first;
-        data->activeProcessedInfo_HTTPReq.push(itp->second);
-
+        //data->activeProcessedInfo_HTTPReq.push(itp->second);
     }
 
-    debug_print("number of pkt: " << (itp->second->no_pkt+1));
-    itp->second->no_pkt++;
+
+    debug_print("number of pkt: " << (itp->second->no_pkt));
 
 
-    if (host_just_added || difftime(cur_time, itp->second->time) < UNIT_TIME)
+    if (host_just_added || Timer::SameTime())
     {
+        itp->second->no_pkt++;
         itp->second->requested.push_back(host.second);
     }
     else
     {
-        Store(itp->second);
+        //storing element
+        ProcessedHTTPReq* processedForStore = itp->second;
+
+        //itc->second.erase(itp);
+        monitor_time cur_time; Timer::GetTime(&cur_time);
+        itp->second = new ProcessedHTTPReq(client, host.first, cur_time);
+
+        pthread_mutex_lock(&data->mutex_storeHTTPReq);
+        data->storeProcessedInfo_HTTPReq.push(processedForStore);
+        pthread_mutex_unlock(&data->mutex_storeHTTPReq);
     }
 
     pthread_mutex_unlock(&data->mutex_activeHTTPReq);
