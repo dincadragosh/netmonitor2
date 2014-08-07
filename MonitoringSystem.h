@@ -4,6 +4,7 @@
 #include <Configuration.h>
 #include <Detector.h>
 #include <Data.h>
+#include <DatabaseManager.h>
 
 class MonitoringSystem
 {
@@ -13,6 +14,7 @@ public:
     Configuration configuration;
     Detector detector;
     Data data;
+    DatabaseManager databaseManager;
 
     MonitoringSystem(Configuration &configuration);
     ~MonitoringSystem();

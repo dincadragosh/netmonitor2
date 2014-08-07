@@ -56,7 +56,7 @@ bool PacketProcessorHTTPReq::ProcessPacket(Packet *pkt)
     {
         debug_print("add new host(" + host.first + ") to mac " + client.mac_name);
         host_just_added = true;
-        monitor_time cur_time; Timer::GetTime(&cur_time);
+        monitor_time cur_time; Timer::GetTime(cur_time);
         pair<Data::iteratorProcessedHTTPReq, bool> p = itc->second.insert(pair<string, ProcessedHTTPReq*>(host.first, new ProcessedHTTPReq(client, host.first, cur_time)));
         itp = p.first;
         //data->activeProcessedInfo_HTTPReq.push(itp->second);
@@ -66,7 +66,7 @@ bool PacketProcessorHTTPReq::ProcessPacket(Packet *pkt)
     debug_print("number of pkt: " << (itp->second->no_pkt));
 
 
-    if (host_just_added || Timer::SameTime())
+    if (host_just_added || Timer::SameTime(itp->second->time))
     {
         itp->second->no_pkt++;
         itp->second->requested.push_back(host.second);
@@ -77,7 +77,7 @@ bool PacketProcessorHTTPReq::ProcessPacket(Packet *pkt)
         ProcessedHTTPReq* processedForStore = itp->second;
 
         //itc->second.erase(itp);
-        monitor_time cur_time; Timer::GetTime(&cur_time);
+        monitor_time cur_time; Timer::GetTime(cur_time);
         itp->second = new ProcessedHTTPReq(client, host.first, cur_time);
 
         pthread_mutex_lock(&data->mutex_storeHTTPReq);
@@ -133,7 +133,7 @@ bool PacketProcessorHTTPReq::Store(ProcessedHTTPReq *p)
 {
     pthread_mutex_lock(&data->mutex_storeHTTPReq);
 
-    debug_print("Started storing");
+/*    debug_print("Started storing");
 
     for(ProcessedHTTPReq *front; ; data->activeProcessedInfo_HTTPReq.pop())
     {
@@ -144,7 +144,7 @@ bool PacketProcessorHTTPReq::Store(ProcessedHTTPReq *p)
         if (front == p)
             break;
     }
-
+*/
     pthread_mutex_unlock(&data->mutex_storeHTTPReq);
 
     return true;

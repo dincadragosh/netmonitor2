@@ -18,10 +18,11 @@ private:
 //    static void SetCurUnit();
 
 public:
-    static void GetTime(monitor_time& cur_time);
-    static monitor_time GetTime();
-    static bool SameTime(monitor_time& first);
+    static void GetTime(time_t& cur_time);
+    static time_t GetTime();
+    static bool SameTime(time_t& first);
     static void StartTime();
+    static string PrintTime(time_t& time);
 };
 
 #endif

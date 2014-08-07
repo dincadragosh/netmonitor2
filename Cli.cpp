@@ -3,6 +3,7 @@
 #include <Data.h>
 #include <MonitoringSystem.h>
 #include <ProcessedHTTPReq.h>
+#include <Timer.h>
 
 void Cli::ShowMenu(int opt)
 {
@@ -43,7 +44,7 @@ void Cli::ShowHTTPReq()
         cout <<"Client " + itc->first.mac_name << endl;
         for(Data::iteratorProcessedHTTPReq itp = itc->second.begin(); itp != itc->second.end(); itp++)
         {
-            cout << "\thost: " << itp->first << " no_requests: " << itp->second->no_pkt << endl;
+            cout << "\thost: " << itp->first << " no_requests: " << itp->second->no_pkt << " time: " << Timer::PrintTime(itp->second->time) << endl;
         }
     }
 

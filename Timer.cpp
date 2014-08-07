@@ -11,7 +11,7 @@ void Timer::StartTime()
     time(&(start_time));
 }
 
-bool Timer::SameTime(monitor_time& first)
+bool Timer::SameTime(time_t& first)
 {
     time_t cur_time;
     time(&cur_time);
@@ -26,10 +26,16 @@ void Timer::GetTime(time_t& cur_time)
     time(&cur_time);
 }
 
-monitor_time Timer::GetTime()
+time_t Timer::GetTime()
 {
     time_t cur_time;
     time(&cur_time);
 
     return cur_time;
+}
+
+string Timer::PrintTime(time_t& time)
+{
+    return string(ctime(&time));
+
 }

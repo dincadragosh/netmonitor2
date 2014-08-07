@@ -1,7 +1,7 @@
 #include <MonitoringSystem.h>
 
 MonitoringSystem::MonitoringSystem(Configuration& config)
-    : configuration(config), detector(*this)
+    : configuration(config), detector(*this), data(), databaseManager(data)
 {
     detector.StartCapture();
 }
