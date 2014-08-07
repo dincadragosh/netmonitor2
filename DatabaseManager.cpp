@@ -3,11 +3,6 @@
 DatabaseManager::DatabaseManager(Data& data,int no_collectors)
     : data(&data), no_collectors(no_collectors)
 {
-    if(pthread_create(&this->pthread_collector, 0, &this->Collect, 0))
-    {
-        perror("pthread_create Collector");
-        exit(1);
-    }
 }
 
 DatabaseManager::~DatabaseManager()
@@ -15,7 +10,7 @@ DatabaseManager::~DatabaseManager()
 
 }
 
-void DatabaseManager::Collect(void *user)
+void DatabaseManager::Collect()
 {
     debug_print("Colector started");
 
@@ -26,8 +21,6 @@ void DatabaseManager::Collect(void *user)
         this->CollextHTTPReq();
         sleep(UNIT_TIME / this->no_collectors)
     }
-
-
 }
 
 void DatabaseManager::CollectHTTPReq()

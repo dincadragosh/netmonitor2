@@ -10,6 +10,9 @@
 MonitoringSystem *ethMonitor = 0;
 MonitoringSystem *wlanMonitor = 0;
 
+/* Database Manager */
+DatabaseManager *databaseManager = 0;
+
 /* Configuration */
 Configuration ethFactoryConfig;
 
