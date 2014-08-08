@@ -68,16 +68,16 @@ void Cli::ShowStoreHTTPReq()
     data->storeProcessedInfo_HTTPReq.pop();
 
     //print for firts element
-    cout << "Client: " << first->client.mac_name << " host: " << first->host << "no_pkt: " << first->no_pkt << endl;
-        for(vector<string>::iterator is = first->requested.begin(); is != first->requested.end(); is++)
-            cout << "/t" << *is << endl;
+    cout << "Client: " << first->client.mac_name << " host: " << first->host << " no_pkt: " << first->no_pkt << endl;
+//        for(vector<string>::iterator is = first->requested.begin(); is != first->requested.end(); is++)
+//            cout << "/t" << *is << endl;
     data->storeProcessedInfo_HTTPReq.push(first);
 
-    for(ProcessedHTTPReq *p = data->storeProcessedInfo_HTTPReq.front(); p != first; )
+    for(ProcessedHTTPReq *p = data->storeProcessedInfo_HTTPReq.front(); p != first; p = data->storeProcessedInfo_HTTPReq.front())
     {
-        cout << "Client: " << p->client.mac_name << " host: " << p->host << "no_pkt: " << p->no_pkt << endl;
-            for(vector<string>::iterator is = p->requested.begin(); is != p->requested.end(); is++)
-                cout << "/t" << *is << endl;
+        cout << "Client: " << p->client.mac_name << " host: " << p->host << " no_pkt: " << p->no_pkt << endl;
+//            for(vector<string>::iterator is = p->requested.begin(); is != p->requested.end(); is++)
+//                cout << "/t" << *is << endl;
         data->storeProcessedInfo_HTTPReq.pop();
         data->storeProcessedInfo_HTTPReq.push(p);
     }

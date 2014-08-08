@@ -68,7 +68,8 @@ bool PacketProcessorHTTPReq::ProcessPacket(Packet *pkt)
 
     if (host_just_added || Timer::SameTime(itp->second->time))
     {
-        itp->second->no_pkt++;
+        if(!host_just_added)
+            itp->second->no_pkt++;
         itp->second->requested.push_back(host.second);
     }
     else
@@ -79,6 +80,7 @@ bool PacketProcessorHTTPReq::ProcessPacket(Packet *pkt)
         //itc->second.erase(itp);
         monitor_time cur_time; Timer::GetTime(cur_time);
         itp->second = new ProcessedHTTPReq(client, host.first, cur_time);
+        itp->second->requested.push_back(host.second);
 
         pthread_mutex_lock(&data->mutex_storeHTTPReq);
         data->storeProcessedInfo_HTTPReq.push(processedForStore);

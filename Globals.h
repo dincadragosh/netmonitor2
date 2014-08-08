@@ -13,6 +13,10 @@ class MonitoringSystem;
 extern MonitoringSystem *ethMonitor;
 extern MonitoringSystem *wlanMonitor;
 
+/* Database Manager */
+class DatabaseManager;
+extern DatabaseManager *databaseManager;
+
 /* Config */
 class Configuration;
 extern Configuration ethFactoryConfig;
