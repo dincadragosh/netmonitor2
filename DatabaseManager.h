@@ -18,6 +18,9 @@ private:
     pthread_cond_t  cond_var;
     bool cond_bool;
 
+    void Cond_lock();
+    void Cond_unlock();
+    void Cond_block();
 public:
     DatabaseManager(Data& data, int no_collectors = 1);
     ~DatabaseManager();

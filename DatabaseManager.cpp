@@ -3,9 +3,10 @@
 #include <Data.h>
 #include <Timer.h>
 #include <ProcessedHTTPReq.h>
+#include <unistd.h>
 
 DatabaseManager::DatabaseManager(Data& data,int no_collectors)
-    : data(&data), no_collectors(no_collectors)
+    : data(&data), no_collectors(no_collectors), cond_bool(false)
 {
 }
 
@@ -22,8 +23,12 @@ void DatabaseManager::Collect()
 
     while(1)
     {
+        this->Cond_block();
+
         this->CollectHTTPReq();
+
         sleep(UNIT_TIME / this->no_collectors);
+        this->Cond_unlock();
     }
 }
 
@@ -57,23 +62,44 @@ void DatabaseManager::Database()
 {
     debug_print("Database thread started");
 
+    while(1)
+    {
+        this->Cond_lock();
 
+        /* if there aren't any more elements to be stored block thread */
+        pthread_mutex_lock(&data->mutex_storeHTTPReq);
+        if(data->storeProcessedInfo_HTTPReq.size() == 0)
+        {
+            this->Cond_block();
+            continue;
+        }
+        pthread_mutex_unlock(&data->mutex_storeHTTPReq);
+
+        //Store an element
+    }
 }
 
-
-
-void cond_lock() {
+void DatabaseManager::Cond_lock()
+{
     pthread_mutex_lock(&cond_lock);
     while (!cond_bool)
         pthread_cond_wait(&cond_var, &cond_lock);
-    cond_bool = false;
+    //cond_bool = false;
     pthread_mutex_unlock(&cond_lock);
 }
 
-void cond_unlock() {
+void DatabaseManager::Cond_unlock()
+{
     pthread_mutex_lock(&cond_lock);
-    while (cond_bool)
+    while (!cond_bool)
         pthread_cond_signal(&cond_var);
+    cond_bool = true;
+    pthread_mutex_unlock(&cond_lock);
+}
+
+void DatabaseManager::Cond_block()
+{
+    pthread_mutex_lock(&cond_lock);
     cond_bool = false;
     pthread_mutex_unlock(&cond_lock);
 }

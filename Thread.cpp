@@ -40,7 +40,7 @@ void startThreads()
         //start database thread
     if(pthread_create(&pthread_database, 0, &databaseHandler, 0))
     {
-        perror("pthread_create Collector");
+        perror("pthread_create Database");
         exit(1);
     }
 
