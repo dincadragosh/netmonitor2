@@ -17,10 +17,10 @@ public:
     ClientInfo client;
     string host;
     monitor_time time;
-    long int no_pkt;
+    int no_pkt;
 
 
-    ProcessedPacket(ClientInfo& client, string& host, monitor_time& time, long int no_pkt=1);
+    ProcessedPacket(ClientInfo& client, string& host, monitor_time& time, int no_pkt=1);
 
 };
 
