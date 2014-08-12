@@ -1,4 +1,10 @@
 #include <Utils.h>
+#include <stdio.h>  /* defines FILENAME_MAX */
+#include <unistd.h>
+
+#define GetCurrentDir getcwd
+
+using namespace std;
 
 std::istream& Utils::SafeGetLine(std::istream& is, std::string& t, char ch)
 {
@@ -33,4 +39,18 @@ std::istream& Utils::SafeGetLine(std::istream& is, std::string& t, char ch)
             t += (char)c;
         }
     }
+}
+
+void Utils::PrintCurDir()
+{
+    char cCurrentPath[FILENAME_MAX];
+
+    if (!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath)))
+    {
+        return;
+    }
+
+    cCurrentPath[sizeof(cCurrentPath) - 1] = '\0'; /* not really required */
+
+    cout << "The current working directory is " << cCurrentPath << endl;
 }

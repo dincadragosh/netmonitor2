@@ -2,9 +2,10 @@
 #include <ProcessedPacket.h>
 #include <ProcessedHTTPReq.h>
 #include <cstring>
+#include <sqlite3.h>
 
 SQLiteInterface::SQLiteInterface()
-    : db_file("./web_service/db.sqlite3"), insert_history("INSERT INTO History (date, client, host, value) VALUES (?,?,?,?)")
+    : db_file("./../network_monitor/web_service/db.sqlite3"), insert_history("INSERT INTO History (date, client, host, value) VALUES (?,?,?,?)")
 {
 //    db_file = "./web_service/db.sqlite3";
 //    insert_history = "INSERT INTO History (date, client, host, value) VALUES (?,?,?,?)";
@@ -15,7 +16,7 @@ bool SQLiteInterface::OpenDatabase()
     int result = sqlite3_open(this->db_file, &this->db);
 	if (result != SQLITE_OK)
 	{
-		cout << "Failed to open database " << sqlite3_errstr(result) << endl;
+		//cout << "Failed to open database " << sqlite3_errstr(result) << endl;
 		sqlite3_close(db);
 		return false;
 	}
@@ -32,7 +33,7 @@ bool SQLiteInterface::InsertHistory(ProcessedPacket *info)
     /* prepare the insert sql, leave stmt ready for loop */
 	result = sqlite3_prepare_v2(this->db, this->insert_history, strlen(this->insert_history) + 1, &stmt, 0);
 	if (result != SQLITE_OK) {
-		debug_print("Failed to prepare database " << sqlite3_errstr(result));
+		//debug_print("Failed to prepare database " << sqlite3_errstr(result));
 		//sqlite3_close(this->db);
 		return false;
 	}

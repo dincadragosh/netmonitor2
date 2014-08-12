@@ -2,6 +2,7 @@
 #define DATABASEMANAGER_H
 
 #include <pthread.h>
+#include <SQLiteInterface.h>
 
 class Data;
 
@@ -10,6 +11,7 @@ class DatabaseManager
 private:
     Data *data;
     int no_collectors;
+    SQLiteInterface sqlite;
 
     void CollectHTTPReq();
 

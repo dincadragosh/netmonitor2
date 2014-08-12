@@ -8,6 +8,8 @@
 DatabaseManager::DatabaseManager(Data& data,int no_collectors)
     : data(&data), no_collectors(no_collectors), cond_bool(false)
 {
+    pthread_mutex_init(&this->cond_lock, 0);
+    pthread_cond_init(&this->cond_var, 0);
 }
 
 DatabaseManager::~DatabaseManager()
@@ -23,7 +25,9 @@ void DatabaseManager::Collect()
 
     while(1)
     {
+        debug_print("Collector - block Database");
         this->Cond_block();
+        debug_print("Collector - start collecting");
 
         this->CollectHTTPReq();
 
@@ -62,6 +66,12 @@ void DatabaseManager::Database()
 {
     debug_print("Database thread started");
 
+    if (!this->sqlite.OpenDatabase())
+    {
+        debug_print("SQLiteInterface failed to open database ");
+        return;
+    }
+
     while(1)
     {
         this->Cond_lock();
@@ -73,9 +83,11 @@ void DatabaseManager::Database()
             this->Cond_block();
             continue;
         }
-        pthread_mutex_unlock(&data->mutex_storeHTTPReq);
 
-        //Store an element
+        this->sqlite.InsertHistory(data->storeProcessedInfo_HTTPReq.front());
+        data->storeProcessedInfo_HTTPReq.pop();
+
+        pthread_mutex_unlock(&data->mutex_storeHTTPReq);
     }
 }
 

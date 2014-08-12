@@ -4,6 +4,7 @@
 #include <MonitoringSystem.h>
 #include <ProcessedHTTPReq.h>
 #include <Timer.h>
+#include <Utils.h>
 
 void Cli::ShowMenu(int opt)
 {
@@ -18,6 +19,9 @@ void Cli::ShowMenu(int opt)
         case 2:
             ShowStoreHTTPReq();
             break;
+        case 3:
+            Utils::PrintCurDir();
+            break;
         default:
             ShowMainMenu();
     }
@@ -30,6 +34,7 @@ void Cli::ShowMainMenu()
     cout << "---------" << endl;
     cout << "1. Show HTTP Active processed" << endl << endl;
     cout << "2. Show HTTP Store  processed" << endl << endl;
+    cout << "2. Show current directory" << endl << endl;
 }
 
 void Cli::ShowHTTPReq()

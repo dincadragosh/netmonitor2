@@ -12,5 +12,6 @@ private:
     Utils();
 public:
     static std::istream& SafeGetLine(std::istream& is, std::string& t, char ch);
+    static void PrintCurDir();
 };
 #endif
