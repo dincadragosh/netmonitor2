@@ -5,10 +5,10 @@
 #include <sqlite3.h>
 
 SQLiteInterface::SQLiteInterface()
-    : db_file("./../network_monitor/web_service/db.sqlite3"), insert_history("INSERT INTO History (date, client, host, value) VALUES (?,?,?,?)")
+    : db_file("./../network_monitor/web_service/db.sqlite3"), insert_history("INSERT INTO network_monitor_history (date, client, host, value) VALUES (?,?,?,?)")
 {
 //    db_file = "./web_service/db.sqlite3";
-//    insert_history = "INSERT INTO History (date, client, host, value) VALUES (?,?,?,?)";
+//    insert_history = "INSERT INTO network_monitor_history (date, client, host, value) VALUES (?,?,?,?)";
 }
 
 bool SQLiteInterface::OpenDatabase()
@@ -33,7 +33,7 @@ bool SQLiteInterface::InsertHistory(ProcessedPacket *info)
     /* prepare the insert sql, leave stmt ready for loop */
 	result = sqlite3_prepare_v2(this->db, this->insert_history, strlen(this->insert_history) + 1, &stmt, 0);
 	if (result != SQLITE_OK) {
-		//debug_print("Failed to prepare database " << sqlite3_errstr(result));
+		debug_print("Failed to prepare database " << sqlite3_errmsg(this->db));
 		//sqlite3_close(this->db);
 		return false;
 	}

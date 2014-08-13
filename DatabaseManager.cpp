@@ -31,8 +31,9 @@ void DatabaseManager::Collect()
 
         this->CollectHTTPReq();
 
-        sleep(UNIT_TIME / this->no_collectors);
+        debug_print("Collector - finished collecting");
         this->Cond_unlock();
+        sleep(UNIT_TIME / this->no_collectors);
     }
 }
 
@@ -45,10 +46,10 @@ void DatabaseManager::CollectHTTPReq()
         for(Data::iteratorProcessedHTTPReq itp = itc->second.begin(); itp != itc->second.end(); )
             if (!Timer::SameTime(itp->second->time))
             {
+                debug_print("Collector - collecting " << itp->second->host);
                 ProcessedHTTPReq* processedForStore = itp->second;
 
                 itc->second.erase(itp++);
-
                 pthread_mutex_lock(&data->mutex_storeHTTPReq);
                 data->storeProcessedInfo_HTTPReq.push(processedForStore);
                 pthread_mutex_unlock(&data->mutex_storeHTTPReq);
@@ -72,21 +73,32 @@ void DatabaseManager::Database()
         return;
     }
 
+    sleep(UNIT_TIME);
+
     while(1)
     {
+        debug_print("Database - waiting to store");
         this->Cond_lock();
+        debug_print("Database - started storing");
 
         /* if there aren't any more elements to be stored block thread */
         pthread_mutex_lock(&data->mutex_storeHTTPReq);
         if(data->storeProcessedInfo_HTTPReq.size() == 0)
         {
+            debug_print("Database - no more elements to store, so blocking");
             this->Cond_block();
-            continue;
         }
+        else
+        {
+            ProcessedHTTPReq *info = data->storeProcessedInfo_HTTPReq.front();
+            debug_print("Database - started storing " << info->host);
 
-        this->sqlite.InsertHistory(data->storeProcessedInfo_HTTPReq.front());
-        data->storeProcessedInfo_HTTPReq.pop();
+            this->sqlite.InsertHistory(info);
+            data->storeProcessedInfo_HTTPReq.pop();
+            delete info;
 
+            debug_print("Database - finished storing the element");
+        }
         pthread_mutex_unlock(&data->mutex_storeHTTPReq);
     }
 }
@@ -103,7 +115,7 @@ void DatabaseManager::Cond_lock()
 void DatabaseManager::Cond_unlock()
 {
     pthread_mutex_lock(&cond_lock);
-    while (!cond_bool)
+    if (!cond_bool)
         pthread_cond_signal(&cond_var);
     cond_bool = true;
     pthread_mutex_unlock(&cond_lock);

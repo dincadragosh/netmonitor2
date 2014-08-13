@@ -37,15 +37,15 @@ bool PacketProcessorHTTPReq::ProcessPacket(Packet *pkt)
     string payload = rawLayer->GetStringPayload();
     pair<string, string> host = GetHost(payload);
 
-    debug_print("client MAC: " + client.mac_name);
-    debug_print("host: " + host.first);
+    //debug_print("client MAC: " + client.mac_name);
+    //debug_print("host: " + host.first);
 
     pthread_mutex_lock(&data->mutex_activeHTTPReq);
 
     Data::iteratorClientHTTPReq itc = data->processedInfo_HTTPReq.find(client);
     if (itc == data->processedInfo_HTTPReq.end())
     {
-        debug_print("add as new client");
+        //debug_print("add as new client");
         pair<Data::iteratorClientHTTPReq, bool> p = data->processedInfo_HTTPReq.insert(pair<ClientInfo, map<string, ProcessedHTTPReq*> >(client, map<string, ProcessedHTTPReq*>()));
         itc = p.first;
     }
@@ -54,7 +54,7 @@ bool PacketProcessorHTTPReq::ProcessPacket(Packet *pkt)
 
     if (itp == itc->second.end())
     {
-        debug_print("add new host(" + host.first + ") to mac " + client.mac_name);
+        //debug_print("add new host(" + host.first + ") to mac " + client.mac_name);
         host_just_added = true;
         monitor_time cur_time; Timer::GetTime(cur_time);
         pair<Data::iteratorProcessedHTTPReq, bool> p = itc->second.insert(pair<string, ProcessedHTTPReq*>(host.first, new ProcessedHTTPReq(client, host.first, cur_time)));
@@ -63,7 +63,7 @@ bool PacketProcessorHTTPReq::ProcessPacket(Packet *pkt)
     }
 
 
-    debug_print("number of pkt: " << (itp->second->no_pkt));
+    //debug_print("number of pkt: " << (itp->second->no_pkt));
 
 
     if (host_just_added || Timer::SameTime(itp->second->time))
