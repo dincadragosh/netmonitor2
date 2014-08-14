@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+
+{% load staticfiles %}
+
+<link type="text/css" rel="stylesheet" href="{% static 'network_monitor/rickshaw/src/css/graph.css' %}">
+<link type="text/css" rel="stylesheet" href="{% static 'network_monitor/rickshaw/examples/css/lines.css' %}">
+<link type="text/css" rel="stylesheet" href="{% static 'network_monitor/rickshaw/rickshaw.css' %}">
+
+<script src="{% static 'network_monitor/rickshaw/vendor/d3.v3.js' %}"></script>
+
+<script src="{% static 'network_monitor/rickshaw/rickshaw.js' %}"></script>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'history_table' %}" method="post">
+{% csrf_token %}
+Start time: <input type="datetime-local" name="date_start">
+End time: <input type="datetime-local" name="date_end">
+<input type="submit"/>
+</form>
+
+<style>
+#chart {
+	position: relative;
+	left: 40px;
+	display: block;
+}
+#y_axis {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 40px;
+}
+#x_axis {
+	position: relative;
+	left: 40px;
+	height: 40px;
+}
+</style>
+
+<br><br><br>
+<div id="chart_container">
+	<div id="y_axis"></div>
+	<div id="chart"></div>
+        <div id="legend_container">
+	    <div id="smoother" title="Smoothing"></div>
+	    <div id="legend"></div>
+	</div>
+        <br>
+        <div id="x_axis"></div>
+</div>
+
+<script>
+
+var palette = new Rickshaw.Color.Palette();
+
+var graph = new Rickshaw.Graph( {
+	element: document.getElementById("chart"),
+	renderer: 'line',
+        height: 500,
+	width: 800,
+	series: [
+{% if users_time_list %}
+    {% for element in users_time_list %}
+		{
+			data: [ 
+        {% for axis in element.value %}
+                               {x: {{ axis.first }}, y: {{ axis.second }} }
+            {% if not forloop.last %}
+                                   ,
+            {% endif %}
+        {% endfor %}
+                              ],
+			name: '{{ element.client }}',
+			color: palette.color()
+		}
+       {% if not forloop.last %}
+                ,
+       {% endif %}
+     {% endfor %}
+{% endif %}
+	]
+} );
+
+graph.renderer.dotSize = 6;
+
+var x_ticks = new Rickshaw.Graph.Axis.Time({
+        graph: graph,
+        orientation: 'bottom',
+        element: document.getElementById('x_axis'),
+        pixelsPerTick: 200
+});
+
+
+new Rickshaw.Graph.Axis.Y( {
+	graph: graph,
+	orientation: 'left',
+	tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+	element: document.getElementById('y_axis')
+} );
+
+new Rickshaw.Graph.HoverDetail({ graph: graph });
+
+graph.render();
+
+var legend = new Rickshaw.Graph.Legend( {
+	graph: graph,
+	element: document.getElementById('legend')
+
+} );
+
+var shelving = new Rickshaw.Graph.Behavior.Series.Toggle( {
+	graph: graph,
+	legend: legend
+} );
+
+var order = new Rickshaw.Graph.Behavior.Series.Order( {
+	graph: graph,
+	legend: legend
+} );
+
+var highlight = new Rickshaw.Graph.Behavior.Series.Highlight( {
+	graph: graph,
+	legend: legend
+} );
+
+</script>
