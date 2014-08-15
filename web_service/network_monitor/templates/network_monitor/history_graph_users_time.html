@@ -7,17 +7,41 @@
 <link type="text/css" rel="stylesheet" href="{% static 'network_monitor/rickshaw/rickshaw.css' %}">
 
 <script src="{% static 'network_monitor/rickshaw/vendor/d3.v3.js' %}"></script>
-
 <script src="{% static 'network_monitor/rickshaw/rickshaw.js' %}"></script>
+
+
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-<form action="{% url 'history_table' %}" method="post">
+
+
+<script type="text/javascript">
+
+function chkSelectedIndex(intIndex) {
+  document.forms[0].submit();
+}
+
+</script>
+ 
+<form action="{% url 'history_graph_users_time' %}" method="post" >
+
+<select id="selList" name="selList" onchange="chkSelectedIndex(this.selectedIndex);">
+     <option id="opt1" name="opt1">option 1</option>
+     <option id="opt2" name="opt2">option 2</option>
+     <option id="opt3" name="opt3">submit form</option>
+</select>
+</form>
+
+
+
+<form action="{% url 'history_graph_users_time' %}" method="post">
 {% csrf_token %}
 Start time: <input type="datetime-local" name="date_start">
 End time: <input type="datetime-local" name="date_end">
 <input type="submit"/>
 </form>
+
+
 
 <style>
 #chart {
@@ -90,7 +114,6 @@ var x_ticks = new Rickshaw.Graph.Axis.Time({
         element: document.getElementById('x_axis'),
         pixelsPerTick: 200
 });
-
 
 new Rickshaw.Graph.Axis.Y( {
 	graph: graph,
