@@ -10,29 +10,39 @@
 <script src="{% static 'network_monitor/rickshaw/rickshaw.js' %}"></script>
 
 
-
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 
 
+<!-- CLIENT SELECTION FORM -->
+
+{% if clients_list %}
 <script type="text/javascript">
 
 function chkSelectedIndex(intIndex) {
-  document.forms[0].submit();
+  if (intIndex != 0)
+    document.forms["clientForm"].submit();
 }
 
 </script>
  
-<form action="{% url 'history_graph_users_time' %}" method="post" >
-
-<select id="selList" name="selList" onchange="chkSelectedIndex(this.selectedIndex);">
-     <option id="opt1" name="opt1">option 1</option>
-     <option id="opt2" name="opt2">option 2</option>
-     <option id="opt3" name="opt3">submit form</option>
+<form name="clientForm" action="{% url 'history_graph_user_host_time' %}" method="post" >
+{% csrf_token %}
+Network users: 
+<select onchange="chkSelectedIndex(this.selectedIndex);">
+     <option selected="selected">select user</option>
+     {% for client in clients_list %}
+     <option value="{{ client }}">{{ client }}</option>
+     {% endfor %}
 </select>
 </form>
+{% else %}
+<p><strong>No packets have been caught!</strong></p>
+{% endif %}
+<br><br><hr><br><br>
 
 
+<!-- TIME SELECTION FORM -->
 
 <form action="{% url 'history_graph_users_time' %}" method="post">
 {% csrf_token %}
@@ -40,8 +50,11 @@ Start time: <input type="datetime-local" name="date_start">
 End time: <input type="datetime-local" name="date_end">
 <input type="submit"/>
 </form>
+<br><br><hr><br><br>
 
 
+
+<!-- USERS HISTORY-TIME GRAPH -->
 
 <style>
 #chart {
@@ -62,7 +75,6 @@ End time: <input type="datetime-local" name="date_end">
 }
 </style>
 
-<br><br><br>
 <div id="chart_container">
 	<div id="y_axis"></div>
 	<div id="chart"></div>
@@ -81,8 +93,8 @@ var palette = new Rickshaw.Color.Palette();
 var graph = new Rickshaw.Graph( {
 	element: document.getElementById("chart"),
 	renderer: 'line',
-        height: 500,
-	width: 800,
+        height: 450,
+	width: 700,
 	series: [
 {% if users_time_list %}
     {% for element in users_time_list %}

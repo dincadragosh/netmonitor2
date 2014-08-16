@@ -10,7 +10,12 @@
 
 <script src="{% static 'network_monitor/rickshaw/rickshaw.js' %}"></script>
 
+
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+
+
+<!-- TIME SELECTION FORM -->
 
 <form action="{% url 'history_table' %}" method="post">
 {% csrf_token %}
@@ -18,6 +23,11 @@ Start time: <input type="datetime-local" name="date_start">
 End time: <input type="datetime-local" name="date_end">
 <input type="submit"/>
 </form>
+<br><br><hr><br><br>
+
+
+
+<!-- USER HISTORY TIME-GRAPH -->
 
 <style>
 #chart {
@@ -38,15 +48,12 @@ End time: <input type="datetime-local" name="date_end">
 }
 </style>
 
-<br><br><br>
 <div id="chart_container">
 	<div id="y_axis"></div>
 	<div id="chart"></div>
         <div id="legend_container">
-	    <div id="smoother" title="Smoothing"></div>
 	    <div id="legend"></div>
 	</div>
-        <br>
         <div id="x_axis"></div>
 </div>
 
