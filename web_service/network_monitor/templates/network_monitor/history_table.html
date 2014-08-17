@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table,th,td
+{
+border:1px solid black;
+border-collapse:collapse;
+}
+th,td
+{
+padding:5px;
+}
+</style>
+</head>
+<body>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'history_table' %}" method="post">
+{% csrf_token %}
+Start time: <input type="datetime-local" name="date_start">
+End time: <input type="datetime-local" name="date_end">
+<input type="submit"/>
+</form>
+
+<table style="width:300px">
+<tr>
+  <th>Date</th>
+  <th>Client</th>		
+  <th>Host</th>
+  <th>Number of pkt</th>
+</tr>
+{% if history_list %}
+    {% for element in history_list %}
+<tr>
+  <td>{{ element.getDate }}</td>
+  <td>{{ element.client }}</td>
+  <td>{{ element.host }}</td>
+  <td>{{ element.value }}</td>
+</tr>
+    {% endfor %}
+{% endif %}
+</table>
+
+</body>
+</html>

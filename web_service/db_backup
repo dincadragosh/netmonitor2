@@ -1,0 +1,44 @@
+INSERT INTO "network_monitor_history" VALUES(1,1408025099,'08:00:27:1c:48:0c','www.sport.ro',7);
+INSERT INTO "network_monitor_history" VALUES(2,1408025099,'08:00:27:1c:48:0c','assets.sport.ro',91);
+INSERT INTO "network_monitor_history" VALUES(3,1408025100,'08:00:27:1c:48:0c','a1.a4w.ro',1);
+INSERT INTO "network_monitor_history" VALUES(4,1408025099,'08:00:27:1c:48:0c','assets1.sport.ro',57);
+INSERT INTO "network_monitor_history" VALUES(5,1408025100,'08:00:27:1c:48:0c','connect.facebook.net',1);
+INSERT INTO "network_monitor_history" VALUES(6,1408025102,'08:00:27:1c:48:0c','content.ad20.net',10);
+INSERT INTO "network_monitor_history" VALUES(7,1408025102,'08:00:27:1c:48:0c','core.ad20.net',19);
+INSERT INTO "network_monitor_history" VALUES(8,1408025102,'08:00:27:1c:48:0c','core1.ad20.net',8);
+INSERT INTO "network_monitor_history" VALUES(9,1408025099,'08:00:27:1c:48:0c','d1.a4w.ro',6);
+INSERT INTO "network_monitor_history" VALUES(10,1408025102,'08:00:27:1c:48:0c','dnn506yrbagrg.cloudfront.net',3);
+INSERT INTO "network_monitor_history" VALUES(11,1408025099,'08:00:27:1c:48:0c','fonts.googleapis.com',2);
+INSERT INTO "network_monitor_history" VALUES(12,1408025100,'08:00:27:1c:48:0c','g-protv.count.brat-online.ro',3);
+INSERT INTO "network_monitor_history" VALUES(13,1408025102,'08:00:27:1c:48:0c','garo.hit.gemius.pl',3);
+INSERT INTO "network_monitor_history" VALUES(14,1408025100,'08:00:27:1c:48:0c','image.stirileprotv.ro',3);
+INSERT INTO "network_monitor_history" VALUES(15,1408025102,'08:00:27:1c:48:0c','ocsp.digicert.com',1);
+INSERT INTO "network_monitor_history" VALUES(16,213432543523,'08:00:27:1c:48:0c','platform.twitter.com',1);
+INSERT INTO "network_monitor_history" VALUES(17,1408025100,'08:00:27:1c:48:0c','sport.count.brat-online.ro',3);
+INSERT INTO "network_monitor_history" VALUES(18,1408025102,'08:00:27:1c:48:0c','sportro.count.brat-online.ro',3);
+INSERT INTO "network_monitor_history" VALUES(19,1408025104,'08:00:27:1c:48:0c','srv-2014-08-14-14.config.parsely.com',2);
+INSERT INTO "network_monitor_history" VALUES(20,1408025105,'08:00:27:1c:48:0c','srv-2014-08-14-14.pixel.parsely.com',2);
+INSERT INTO "network_monitor_history" VALUES(21,1408025104,'08:00:27:1c:48:0c','stirileprotv.ro',2);
+INSERT INTO "network_monitor_history" VALUES(22,1408025100,'08:00:27:1c:48:0c','web3.protv.ro',1);
+INSERT INTO "network_monitor_history" VALUES(23,1408025101,'08:00:27:1c:48:0c','www.google-analytics.com',7);
+INSERT INTO "network_monitor_history" VALUES(24,1408025100,'08:00:27:1c:48:0c','www.googletagmanager.com',1);
+INSERT INTO "network_monitor_history" VALUES(25,1408025109,'08:00:27:1c:48:0c','assets.pinterest.com',1);
+INSERT INTO "network_monitor_history" VALUES(26,1408025109,'08:00:27:1c:48:0c','assets.sport.ro',2);
+INSERT INTO "network_monitor_history" VALUES(27,1408025109,'08:00:27:1c:48:0c','www.sport.ro',6);
+INSERT INTO "network_monitor_history" VALUES(28,1408025140,'08:00:27:1c:48:0c','www.google.ro',1);
+INSERT INTO "network_monitor_history" VALUES(29,1408025170,'08:00:27:1c:48:0c','',1);
+INSERT INTO "network_monitor_history" VALUES(30,1408025170,'08:00:27:1c:48:0c','b.scorecardresearch.com',1);
+INSERT INTO "network_monitor_history" VALUES(31,1408025170,'08:00:27:1c:48:0c','bs.serving-sys.com',1);
+INSERT INTO "network_monitor_history" VALUES(32,1408025170,'08:00:27:1c:48:0c','careers.stackoverflow.com',2);
+INSERT INTO "network_monitor_history" VALUES(33,1408025170,'08:00:27:1c:48:0c','cdn.sstatic.net',3);
+INSERT INTO "network_monitor_history" VALUES(34,1408025171,'08:00:27:1c:48:0c','ds.serving-sys.com',1);
+INSERT INTO "network_monitor_history" VALUES(35,1408025170,'08:00:27:1c:48:0c','engine.adzerk.net',3);
+INSERT INTO "network_monitor_history" VALUES(36,1408025170,'08:00:27:1c:48:0c','pixel.quantserve.com',1);
+INSERT INTO "network_monitor_history" VALUES(37,1408025169,'08:00:27:1c:48:0c','stackoverflow.com',2);
+INSERT INTO "network_monitor_history" VALUES(38,1408025170,'08:00:27:1c:48:0c','www.google-analytics.com',1);
+INSERT INTO "network_monitor_history" VALUES(39,435345453245,'08:00:27:1c:48:0c','www.google.ro',1);
+CREATE TABLE "network_monitor_httpreqinfo" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "history_id" integer NOT NULL REFERENCES "network_monitor_history" ("id"),
+    "request" varchar(100) NOT NULL
+);
