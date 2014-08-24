@@ -7,6 +7,7 @@
 <link type="text/css" rel="stylesheet" href="{% static 'network_monitor/rickshaw/rickshaw.css' %}">
 
 <script src="{% static 'network_monitor/rickshaw/vendor/d3.v3.js' %}"></script>
+
 <script src="{% static 'network_monitor/rickshaw/rickshaw.js' %}"></script>
 
 
@@ -14,44 +15,17 @@
 
 
 
-<!-- CLIENT SELECTION FORM -->
 
-{% if clients_list %}
-<script type="text/javascript">
-var user_links = [
-                 {% for client in clients_list %}
-                  "{% url 'history_graph_user_host_time' client %}"
-                  {% if not forloop.last %} , {% endif %}
-                 {% endfor %}
-                 ]
+<!-- Go back to Users  -->
 
-function selectUser(select_sender) {
-  if (select_sender.selectedIndex != 0)
-  {
-    window.open(user_links[select_sender.selectedIndex - 1], "_self");    
-    select_sender.selectedIndex = 0; 
-  }
-}
-
-</script>
- 
-{% csrf_token %}
-Network users: 
-<select id="users" onLoad="resetIndex(this)"  onchange="selectUser(this, this.selectedIndex);">
-     <option selected="selected">select user</option>
-     {% for client in clients_list %}
-     <option value="{{ client }}">{{ client }}</option>
-     {% endfor %}
-</select>
-{% else %}
-<p><strong>No packets have been caught!</strong></p>
-{% endif %}
+<button onclick="location.href='{% url 'history_graph_users_time' %}'">All Users</button>
 <br><br><hr><br><br>
+
 
 
 <!-- TIME SELECTION FORM -->
 
-<form action="{% url 'history_graph_users_time' %}" method="post">
+<form action="{% url 'history_graph_user_host_time' client  %}" method="post">
 {% csrf_token %}
 Start time: <input type="datetime-local" name="date_start">
 End time: <input type="datetime-local" name="date_end">
@@ -61,7 +35,7 @@ End time: <input type="datetime-local" name="date_end">
 
 
 
-<!-- USERS HISTORY-TIME GRAPH -->
+<!-- USER HISTORY TIME-GRAPH -->
 
 <style>
 #chart {
@@ -86,10 +60,8 @@ End time: <input type="datetime-local" name="date_end">
 	<div id="y_axis"></div>
 	<div id="chart"></div>
         <div id="legend_container">
-	    <div id="smoother" title="Smoothing"></div>
 	    <div id="legend"></div>
 	</div>
-        <br>
         <div id="x_axis"></div>
 </div>
 
@@ -100,11 +72,12 @@ var palette = new Rickshaw.Color.Palette();
 var graph = new Rickshaw.Graph( {
 	element: document.getElementById("chart"),
 	renderer: 'line',
-        height: 450,
-	width: 700,
+        height: 500,
+	width: 800,
 	series: [
-{% if users_time_list %}
-    {% for element in users_time_list %}
+
+{% if user_graph_list %}
+    {% for element in user_graph_list %}
 		{
 			data: [ 
         {% for axis in element.value %}
@@ -114,7 +87,7 @@ var graph = new Rickshaw.Graph( {
             {% endif %}
         {% endfor %}
                               ],
-			name: '{{ element.client }}',
+			name: '{{ element.host }}',
 			color: palette.color()
 		}
        {% if not forloop.last %}
@@ -122,6 +95,23 @@ var graph = new Rickshaw.Graph( {
        {% endif %}
      {% endfor %}
 {% endif %}
+
+{% if other_hosts %}
+               , 
+                {
+                        data: [ 
+        {% for axis in other_hosts.value %}
+                               {x: {{ axis.first }}, y: {{ axis.second }} }
+            {% if not forloop.last %}
+                                   ,
+            {% endif %}
+        {% endfor %}
+                              ],
+                        name: 'other pages',
+                        color: palette.color()
+                }
+{% endif %}
+
 	]
 } );
 
@@ -133,6 +123,7 @@ var x_ticks = new Rickshaw.Graph.Axis.Time({
         element: document.getElementById('x_axis'),
         pixelsPerTick: 200
 });
+
 
 new Rickshaw.Graph.Axis.Y( {
 	graph: graph,

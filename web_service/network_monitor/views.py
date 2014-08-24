@@ -34,20 +34,40 @@ def history_graph_user_host_time(request, user_mac):
     else:
         history_list = History.objects.filter(client__exact=user_mac).order_by('host', 'date')
     
-    if (!history_list):
-        return HttpResponseRedirect(reverse('polls:results', args=(p.id,)))
+    if (not history_list):
+        return HttpResponseRedirect(reverse('history_graph_users_time'))
 
     user_graph_list = []
+    other_hosts = {'value': [], 'hosts' : ''}
     cur_host = None
-    for element in history_list:
+    for idx, element in enumerate(history_list):
         if element.host != cur_host:
+            #if idx + 1 < len(history_list) and element.host == history_list[idx+1].host:# and element.host == history_list[idx+2].host:
             cur_host = element.host
             user_graph_list.append({'host': element.host, 'value': [{'first': element.date, 'second': element.value}]})
+            '''else:
+                other_value = next((x for x in other_hosts['value'] if x['first'] == element.date), None)
+                if other_value:
+                    print(element.host)
+                    other_value['second'] += element.value
+                else:
+                    other_hosts['value'].append({'first': element.date, 'second': element.value})
+                other_hosts['hosts'] += element.host + ' ' 
+            '''
         else:
             user_graph_list[-1]['value'].append({'first': element.date, 'second': element.value})
-    print(user_graph_list)    
-
-    context = {'user_graph_list': user_graph_list}
+    
+    [user_graph_list, other_hosts_aux] = getCommonHosts(user_graph_list, 8)
+    #other_hosts['hosts'] = other_hosts_aux['hosts'] + ' ' + other_hosts['hosts']
+    
+    if (other_hosts_aux != None):
+        other_hosts['value'].extend(other_hosts_aux['value'])
+    other_hosts['value'] = sorted(other_hosts['value'], key=lambda value: value['first']) 
+    
+    print(user_graph_list)
+    print(other_hosts)    
+    
+    context = {'user_graph_list': user_graph_list , 'other_hosts': other_hosts, "client": user_mac }
     return render(request, 'network_monitor/history_graph_user.html', context)
 
 
@@ -77,3 +97,34 @@ def history_graph_users_time(request):
     
     context = {'users_time_list': users_time_list, 'clients_list': clients_list}
     return render(request, 'network_monitor/history_graph_users_time.html', context)
+
+
+
+def getCommonHosts(user_graph_list, best_no):
+    note = []
+    for element in user_graph_list:
+        sum = 0
+        for axis in element['value']:
+            sum += axis['second'] 
+        note.append({'host': element['host'], 'total_value': (len(element['value'] * sum))})
+    
+    note = sorted(note, key=lambda elem: elem['total_value'], reverse=True)
+    #new_list = sorted(user_graph_list, key=lambda elem: for n in note: if n['host'] == elem[host]: n['total_value'])
+    new_list = []
+    for n in note:
+        for elem in user_graph_list:
+            if n['host'] == elem['host']:
+                new_list.append(elem)
+    
+    if best_no >= len(user_graph_list):
+        return [new_list, None]
+    else:
+        other_hosts_aux = {'value': [], 'hosts' : ''}
+        for elem in new_list[best_no:]:
+            other_hosts_aux['hosts'] += elem['host'] + ' '
+            other_hosts_aux['value'].extend(elem['value'])
+        return [new_list[:best_no], other_hosts_aux]
+
+
+
+
